@@ -19,7 +19,7 @@ var err error
 
 func init() {
 	flag.StringVar(&mongoHost, "host", "localhost", "the host running the MongoDB instance")
-	flag.IntVar(&mongoPort, "port", 27017, "the port the MongoDB instance is listening on")
+	flag.IntVar(&mongoPort, "port", 27017, "the port MongoDB is listening on")
 	flag.StringVar(&mongoDb, "db", "", "the db to use")
 	flag.StringVar(&mongoColl, "coll", "", "the collection to use")
 	flag.Parse()
@@ -38,6 +38,8 @@ func main() {
 	session.SetMode(mgo.Monotonic, true)
 
 	switch cmd {
+	case "help", "-h", "--h", "--help":
+		displayHelp()
 	case "colls":
 		listColls(session)
 	case "dbs":
@@ -76,6 +78,20 @@ func lastDocument(session *mgo.Session) {
 	coll.Find(nil).Sort("-_id").One(&m)
 	js, _ := json.MarshalIndent(&m, "", "  ")
 	fmt.Println(string(js))
+}
+
+func displayHelp() {
+	fmt.Println("usage: mon [flags] cmd")
+	fmt.Println("available flags:")
+	fmt.Println("  -host      # the host running the MongoDB instance")
+	fmt.Println("  -port      # the port MongoDB is listening on")
+	fmt.Println("  -db        # the db to use")
+	fmt.Println("  -coll      # the dcollection to use")
+	fmt.Println("available cmds:")
+	fmt.Println("  help       # display this message")
+	fmt.Println("  dbs        # list all dbs")
+	fmt.Println("  colls      # list all collections in provided db")
+	fmt.Println("  last       # display most recent document added to provided db and collection")
 }
 
 func getSession() (session *mgo.Session) {
