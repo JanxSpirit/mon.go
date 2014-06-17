@@ -46,8 +46,11 @@ func main() {
 		listDbs(session)
 	case "last":
 		lastDocument(session)
+	case "dropDb":
+		dropDb(session)
+	case "dropColl":
+		dropColl(session)
 	}
-
 }
 
 func listColls(session *mgo.Session) {
@@ -80,6 +83,14 @@ func lastDocument(session *mgo.Session) {
 	fmt.Println(string(js))
 }
 
+func dropDb(session *mgo.Session) {
+	session.DB(mongoDb).DropDatabase()
+}
+
+func dropColl(session *mgo.Session) {
+	session.DB(mongoDb).C(mongoColl).DropCollection()
+}
+
 func displayHelp() {
 	fmt.Println("usage: mon [flags] cmd")
 	fmt.Println("available flags:")
@@ -92,6 +103,8 @@ func displayHelp() {
 	fmt.Println("  dbs        # list all dbs")
 	fmt.Println("  colls      # list all collections in provided db")
 	fmt.Println("  last       # display most recent document added to provided db and collection")
+	fmt.Println("  dropDb     # drop the db with no warnings")
+	fmt.Println("  last       # drop the collection with no warnings")
 }
 
 func getSession() (session *mgo.Session) {
